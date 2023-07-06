@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  service_a:
+    restart: always
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile.base
+    environment:
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
+      RABBITMQ_HOST: 'rabbitmq'
+      RABBITMQ_QUEUE_VHOST: ${RABBITMQ_VHOST}
+    networks:
+      - app-network
+    ports:
+      - "80:80"
+    volumes:
+      - ./service_a:/var/www/app
+
+  service_b:
+    restart: always
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile.base
+    environment:
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
+      RABBITMQ_HOST: 'rabbitmq'
+      RABBITMQ_QUEUE_VHOST: ${RABBITMQ_VHOST}
+      REDIS_HOST: 'redis'
+    networks:
+      - app-network
+    volumes:
+      - ./service_b:/var/www/app
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    tty: true
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    tty: true
+    command: ['redis-server', '--appendonly yes']
+    networks:
+      - app-network
+    volumes:
+      - redisdata:/data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  rabbitmqdata:
+    driver: local
+  redisdata:
+    driver: local
