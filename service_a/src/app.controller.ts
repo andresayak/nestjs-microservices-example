@@ -7,7 +7,7 @@ export class AppController {
     }
 
     @Get('/create_task')
-    getHello() {
+    createTask() {
         return new Promise((done, reject) => {
             try {
                 this.client.send('test1', 'Start_' + new Date().getTime()).subscribe(async (observerOrNext) => {

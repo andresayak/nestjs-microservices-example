@@ -20,7 +20,7 @@ async function bootstrap() {
             },
         },
     });
-    await microservice.listen()
+    await microservice.listen();
 }
 
 bootstrap();
