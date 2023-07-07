@@ -4,7 +4,18 @@ Microservices with NestJS: RabbitMQ, Redis, and Docker Compose Example
 
 ## Description
 
-This project demonstrates how to work with microservices using NestJS, RabbitMQ, Redis, and Docker Compose. It consists of two NestJS containers, one for the Swagger API documentation and a simple endpoint to create tasks and send them to RabbitMQ. The second NestJS container contains a microservice that implements the commands test1, test2, and test3. In the example, the first container calls the test1 command, and test1 calls the test2 and test3 commands. Before invoking a subcommand, the script checks whether the result of that command's execution is present in the cache. This is done for fault tolerance. If a task fails to execute completely for some reason, it will be restarted. If the subtasks have already been executed, it skips their execution and retrieves the results from the cache. The cache is stored in Redis, and after a successful task execution, the cache is cleared. All containers are launched using Docker Compose.
+This project demonstrates how to work with microservices using NestJS, RabbitMQ, Redis and Docker Compose. 
+
+It consists of two NestJS containers, one for the Swagger API documentation and a simple endpoint to create tasks and send them to RabbitMQ. 
+The second NestJS container contains a microservice that implements the commands test1, test2, and test3. 
+
+In the example, the first container calls the test1 command, and test1 calls the test2 and test3 commands. Before invoking a subcommand, the script checks whether the result of that command's execution is present in the cache. This is done for fault tolerance. 
+
+If a task fails to execute completely for some reason, it will be restarted. 
+
+If the subtasks have already been executed, it skips their execution and retrieves the results from the cache. The cache is stored in Redis, and after a successful task execution, the cache is cleared. 
+
+All containers are launched using Docker Compose.
 
 ### Installation
 
