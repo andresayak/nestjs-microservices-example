@@ -20,13 +20,13 @@ All containers are launched using Docker Compose.
 1. To run this project locally, please follow the instructions below:
 
 ```
-git clone git@github.com:andresayak/nestsj-microservices-example.git
+git clone git@github.com:andresayak/nestjs-microservices-example.git
 ```
 
 2. Navigate to the project directory:
 
 ```
-cd nestsj-microservices-example
+cd nestjs-microservices-example
 ```
 
 3. Create a .env file in the root directory of the project and set the following environment variables:
