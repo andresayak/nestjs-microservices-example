@@ -6,14 +6,13 @@ async function bootstrap() {
     const user = process.env['RABBITMQ_USER'];
     const password = process.env['RABBITMQ_PASS'];
     const host = process.env['RABBITMQ_HOST'];
-    const queueName = process.env['RABBITMQ_QUEUE_NAME'];
     const vhost = process.env['RABBITMQ_QUEUE_VHOST'];
 
     const microservice = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
         transport: Transport.RMQ,
         options: {
             urls: [`amqp://${user}:${password}@${host}/${vhost}`],
-            queue: queueName,
+            queue: 'serviceB',
             noAck: false,
             queueOptions: {
                 durable: true

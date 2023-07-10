@@ -1,31 +1,27 @@
 import {Module} from '@nestjs/common';
+import {AppController} from './app.controller';
+import {ClientProxyFactory, Transport} from "@nestjs/microservices";
 import {ConfigModule, ConfigService} from '@nestjs/config';
-import {ClientProxyFactory, Transport} from '@nestjs/microservices';
-import {AppController} from "./app.controller";
-import {RedisClient} from 'redis';
-import {CacheService} from "./cache.service";
 
 @Module({
     imports: [
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot()
     ],
-    controllers: [
-        AppController
-    ],
+    controllers: [AppController],
     providers: [
-        CacheService,
         {
-            provide: 'SERVICE_B',
+            provide: 'SERVICE_A_SUBSCRIBE',
             useFactory: (configService: ConfigService) => {
                 const user = configService.get('RABBITMQ_USER');
                 const password = configService.get('RABBITMQ_PASS');
                 const host = configService.get('RABBITMQ_HOST');
                 const vhost = configService.get('RABBITMQ_QUEUE_VHOST');
+
                 return ClientProxyFactory.create({
                     transport: Transport.RMQ,
                     options: {
                         urls: [`amqp://${user}:${password}@${host}/${vhost}`],
-                        queue: 'serviceB',
+                        queue: 'serviceA',
                         queueOptions: {
                             durable: true,
                         },
@@ -34,18 +30,7 @@ import {CacheService} from "./cache.service";
             },
             inject: [ConfigService],
         },
-        {
-            provide: 'REDIS_CLIENT',
-            useFactory: async (configService: ConfigService) => {
-                return new RedisClient({
-                    host: configService.get('REDIS_HOST'),
-                    port: +configService.get('REDIS_PORT', 6379),
-                });
-            },
-            inject: [ConfigService]
-        },
     ],
 })
 export class AppModule {
-
 }

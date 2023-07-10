@@ -1,16 +1,25 @@
 import {NestFactory} from '@nestjs/core';
+import {MicroserviceOptions, Transport} from '@nestjs/microservices';
 import {AppModule} from './app.module';
-import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    const config = new DocumentBuilder()
-        .setTitle('Microservices with NestJS example')
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('', app, document);
+    const user = process.env['RABBITMQ_USER'];
+    const password = process.env['RABBITMQ_PASS'];
+    const host = process.env['RABBITMQ_HOST'];
+    const vhost = process.env['RABBITMQ_QUEUE_VHOST'];
 
-    await app.listen(80);
+    const microservice = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+        transport: Transport.RMQ,
+        options: {
+            urls: [`amqp://${user}:${password}@${host}/${vhost}`],
+            queue: 'serviceA',
+            noAck: false,
+            queueOptions: {
+                durable: true
+            },
+        },
+    });
+   await microservice.listen();
 }
 
 bootstrap();

@@ -1,7 +1,8 @@
 version: '3'
 
 services:
-  service_a:
+
+  app:
     restart: always
     build:
       context: ./
@@ -16,6 +17,23 @@ services:
       - app-network
     ports:
       - "80:80"
+    volumes:
+      - ./app:/var/www/app
+
+  service_a:
+    restart: always
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile.base
+    environment:
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_QUEUE_NAME: ${RABBITMQ_QUEUE_NAME}
+      RABBITMQ_HOST: 'rabbitmq'
+      RABBITMQ_QUEUE_VHOST: ${RABBITMQ_VHOST}
+      REDIS_HOST: 'redis'
+    networks:
+      - app-network
     volumes:
       - ./service_a:/var/www/app
 
